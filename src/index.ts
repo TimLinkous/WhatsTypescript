@@ -1,10 +1,13 @@
-//references to the form and the definition list
+document.addEventListener('DOMContentLoaded', () => {
+
+//references to the lists
 const form = document.querySelector('#defineform') as HTMLFormElement;
 const definitionList = document.querySelector('#definition-list') as HTMLElement;
+const definedWordElement = document.querySelector('#defined-word') as HTMLElement;
 
 // check if both exist
-if (form && definitionList) {
-  console.log('Form and definition list found');
+if (form && definitionList && definedWordElement) {
+  console.log('Form, definition list, and defined word element found');
 
   form.addEventListener('submit', async (event: Event) => {
     event.preventDefault();
@@ -15,6 +18,8 @@ if (form && definitionList) {
     const text = formData.get('defineword') as string;
 
     console.log(`Word submitted: ${text}`);
+
+    definedWordElement.textContent = text;
 
     try {
       // API request to get the definition
@@ -41,10 +46,17 @@ if (form && definitionList) {
         // Iterate through each meaning and definition
         for (const meaning of data[0].meanings) {
           for(const definition of meaning.definitions) {
-            if (definitionCount < 2) {
+            if (definitionCount < 3) {
             // Create a new list item for each definition
               const listItem = document.createElement('li');
-              listItem.textContent = `${meaning.partOfSpeech}: ${definition.definition}`;
+              let content = `${meaning.partOfSpeech}: ${definition.definition}`;
+
+              //Synonyms
+              if (definition.synonyms && definition.synonyms.length > 0) {
+                content += `<br>Synonyms: ${definition.synonyms.slice(0,3).join(', ')}`;
+              }
+
+              listItem.innerHTML = content;
 
             // Add the list item to the definition list
               definitionList.appendChild(listItem);
@@ -54,7 +66,7 @@ if (form && definitionList) {
               break;
             }
           }
-          if (definitionCount >= 2) break;
+          if (definitionCount >= 3) break;
         }
         // If no definitions were found, display a message
         if (definitionCount === 0) {
@@ -74,3 +86,4 @@ if (form && definitionList) {
 } else {
   console.error('Form or definition list not found.');
 }
+});
