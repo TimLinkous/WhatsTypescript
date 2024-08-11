@@ -45,16 +45,15 @@ if (form && definitionList && definedWordElement) {
         
         // Iterate through each meaning and definition
         for (const meaning of data[0].meanings) {
-          let definitionsForThisMeaning = 0
           for(const definition of meaning.definitions) {
-            if (definitionCount < 5 && definitionsForThisMeaning < 1) {
+            if (definitionCount < 5) {
             // Create a new list item for each definition
               const listItem = document.createElement('li');
-              let content = `${definition.definition}`;
+              let content = `${meaning.partOfSpeech}: ${definition.definition}`;
 
               //Synonyms
               if (definition.synonyms && definition.synonyms.length > 0) {
-                content += `<br><em>Synonyms:<em> ${definition.synonyms.slice(0,3).join(', ')}`;
+                content += `<br>Synonyms: ${definition.synonyms.slice(0,3).join(', ')}`;
               }
 
               listItem.innerHTML = content;
@@ -62,7 +61,6 @@ if (form && definitionList && definedWordElement) {
             // Add the list item to the definition list
               definitionList.appendChild(listItem);
               definitionCount++;
-              definitionsForThisMeaning++;
             } else {
               // Exit both loops if two definitions are added
               break;
